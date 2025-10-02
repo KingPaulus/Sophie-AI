@@ -1,8 +1,16 @@
 package com.sophieai;
 
 import java.util.Scanner;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.simple.SimpleLogger;
 
 public class App {
+    static {
+        // SLF4J NOP-Logger aktivieren
+        System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "ERROR");
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Willkommen bei Sophie-AI 🧠✨");
@@ -25,9 +33,8 @@ public class App {
                 ChatBot chat = new ChatBot();
                 chat.startChat();
             } else if (auswahl == 3) {
-                TierClassifier classifier = new TierClassifier();
                 ModelManager manager = new ModelManager();
-                manager.startDataManager(classifier);
+                manager.startDataManager();
             } else if (auswahl == 4) {
                 WeatherClassifier weather = new WeatherClassifier();
                 weather.startInteractiveSession();

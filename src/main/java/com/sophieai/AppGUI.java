@@ -1,40 +1,45 @@
 package com.sophieai;
 
+import com.apple.eawt.Application;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import com.apple.eawt.Application;
 
 public class AppGUI {
 
     private JFrame frame;
     private JTextArea outputArea;
+    private JLabel imageLabel; // Bildanzeige
 
     public AppGUI() {
         frame = new JFrame("Sophie-AI 🧠✨");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // wichtig: schließt nur das Fenster
-        frame.setSize(500, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 500);
         frame.setLayout(new BorderLayout());
-        frame.setLocationRelativeTo(null); // zentrieren
+        frame.setLocationRelativeTo(null);
 
-        // Icon für JFrame (Titelbar, Fenster)
-        ImageIcon icon = new ImageIcon("img/icon_large.png"); // Bild aus dem img-Ordner
+        // Fenster-Icon
+        ImageIcon icon = new ImageIcon("img/icon_large.png");
         frame.setIconImage(icon.getImage());
 
         // Icon für macOS Dock
-        /*try {
-            Application app = Application.getApplication();
-            app.setDockIconImage(icon.getImage());
-        } catch (NoClassDefFoundError e) {
-            System.out.println("Nicht auf macOS, Dock-Icon nicht gesetzt.");
-        }*/
+        Taskbar taskbar = Taskbar.getTaskbar();
+        if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
+            taskbar.setIconImage(icon.getImage());
+        }
 
-
+        // Textausgabe
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(outputArea);
         frame.add(scrollPane, BorderLayout.CENTER);
 
+        // Bildausgabe
+        imageLabel = new JLabel("", SwingConstants.CENTER);
+        frame.add(imageLabel, BorderLayout.EAST);
+
+        // Menü-Buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(1, 4, 10, 10));
 
@@ -53,7 +58,7 @@ public class AppGUI {
         btnTier.addActionListener(e -> startTierAbfrage());
         btnWetter.addActionListener(e -> startWetterVorhersage());
         btnChat.addActionListener(e -> startChat());
-        btnExit.addActionListener(e -> frame.dispose()); // schließt nur das GUI-Fenster
+        btnExit.addActionListener(e -> frame.dispose());
 
         frame.setVisible(true);
     }
@@ -69,6 +74,7 @@ public class AppGUI {
             int label = classifier.predict(new double[]{groesse, gewicht});
             String tier = classifier.getTierName(label);
             outputArea.append("Vorhersage Tier: " + tier + "\n");
+            showImage(tier);
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(frame, "Ungültige Eingabe!", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
@@ -87,6 +93,7 @@ public class AppGUI {
             int label = weather.predict(new double[]{temp, humidity, wind});
             String wetter = weather.getWeatherName(label);
             outputArea.append("Vorhersage Wetter: " + wetter + "\n");
+            showImage(wetter);
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(frame, "Ungültige Eingabe!", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
@@ -123,5 +130,26 @@ public class AppGUI {
         return "Interessant... erzähl mir mehr!";
     }
 
+    // Bild-Anzeige je nach Ergebnis
+    private void showImage(String prediction) {
+        String path = null;
+        switch (prediction.toLowerCase()) {
+            case "katze" -> path = "img/tiere/katze.png";
+            case "hund" -> path = "img/tiere/hund.png";
+            case "maus" -> path = "img/tiere/maus.png";
+            case "hamster" -> path = "img/tiere/hamster.png";
+            case "kaninchen" -> path = "img/tiere/kaninchen.png";
+            case "sonnig" -> path = "img/wetter/sonne.png";
+            case "regnerisch" -> path = "img/wetter/regnerisch.png";
+            case "bewölkt" -> path = "img/wetter/bewoelkt.png";
+        }
 
+        if (path != null) {
+            ImageIcon icon = new ImageIcon(path);
+            Image scaled = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+            imageLabel.setIcon(new ImageIcon(scaled));
+        } else {
+            imageLabel.setIcon(null);
+        }
+    }
 }

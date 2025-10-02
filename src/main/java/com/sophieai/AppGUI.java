@@ -1,5 +1,7 @@
 package com.sophieai;
 
+import com.apple.eawt.Application;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +14,7 @@ public class AppGUI {
 
     public AppGUI() {
         frame = new JFrame("Sophie-AI 🧠✨");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 500);
         frame.setLayout(new BorderLayout());
         frame.setLocationRelativeTo(null);
@@ -22,12 +24,10 @@ public class AppGUI {
         frame.setIconImage(icon.getImage());
 
         // Icon für macOS Dock
-        /*try {
-            Application app = Application.getApplication();
-            app.setDockIconImage(icon.getImage());
-        } catch (NoClassDefFoundError e) {
-            System.out.println("Nicht auf macOS, Dock-Icon nicht gesetzt.");
-        }*/
+        Taskbar taskbar = Taskbar.getTaskbar();
+        if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
+            taskbar.setIconImage(icon.getImage());
+        }
 
         // Textausgabe
         outputArea = new JTextArea();

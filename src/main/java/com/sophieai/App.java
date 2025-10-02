@@ -12,7 +12,8 @@ public class App {
             System.out.println("\nWas möchtest du tun?");
             System.out.println("1 - Tiere abfragen");
             System.out.println("2 - Chat starten");
-            System.out.println("3 - Exit");
+            System.out.println("3 - Chat starten");
+            System.out.println("4 - Exit");
             int auswahl = scanner.nextInt();
             scanner.nextLine(); // Scanner-Puffer leeren
 
@@ -23,6 +24,10 @@ public class App {
                 ChatBot chat = new ChatBot();
                 chat.startChat();
             } else if (auswahl == 3) {
+                TierClassifier classifier = new TierClassifier();
+                ModelManager manager = new ModelManager();
+                manager.startDataManager(classifier);
+            } else if (auswahl == 4) {
                 System.out.println("Auf Wiedersehen!");
                 running = false;
             } else {

@@ -57,4 +57,13 @@ public class TierClassifier {
 
         System.out.println("Beende Tierabfrage...");
     }
+
+    public LogisticRegression getModel() {
+        return model;
+    }
+
+    public void setModel(LogisticRegression model) {
+        this.model = model;
+    }
+
 }

@@ -71,10 +71,12 @@ public class ModelManager {
 
             switch (choice) {
                 case 1 -> {
-                    System.out.print("Dateiname eingeben (z.B. tiere_v1.dat): ");
+                    System.out.print("Dateiname eingeben (z.B. tiere_v1): ");
                     String saveName = scanner.nextLine();
+                    saveName = sanitizeFileName(saveName);
                     saveModel(classifier.getModel(), saveName);
                 }
+
                 case 2 -> {
                     List<String> models = listModels();
                     if (models.isEmpty()) {
@@ -114,4 +116,18 @@ public class ModelManager {
             }
         }
     }
+
+
+    // Hilfsmethode: Dateiname bereinigen
+    private String sanitizeFileName(String name) {
+        // Punkte und Kommas ersetzen
+        name = name.replace(".", "-").replace(",", "-");
+
+        // Falls noch keine Endung .dat -> anhängen
+        if (!name.endsWith(".dat")) {
+            name = name + ".dat";
+        }
+        return name;
+    }
+
 }

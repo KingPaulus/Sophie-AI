@@ -3,6 +3,7 @@ package com.sophieai;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import com.apple.eawt.Application;
 
 public class AppGUI {
 
@@ -14,6 +15,20 @@ public class AppGUI {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // wichtig: schließt nur das Fenster
         frame.setSize(500, 400);
         frame.setLayout(new BorderLayout());
+        frame.setLocationRelativeTo(null); // zentrieren
+
+        // Icon für JFrame (Titelbar, Fenster)
+        ImageIcon icon = new ImageIcon("img/icon_large.png"); // Bild aus dem img-Ordner
+        frame.setIconImage(icon.getImage());
+
+        // Icon für macOS Dock
+        /*try {
+            Application app = Application.getApplication();
+            app.setDockIconImage(icon.getImage());
+        } catch (NoClassDefFoundError e) {
+            System.out.println("Nicht auf macOS, Dock-Icon nicht gesetzt.");
+        }*/
+
 
         outputArea = new JTextArea();
         outputArea.setEditable(false);
@@ -78,9 +93,35 @@ public class AppGUI {
     }
 
     private void startChat() {
-        ChatBot chat = new ChatBot();
-        outputArea.append("Chat gestartet! (Konsole öffnen für Chat-Interaktion)\n");
-        chat.startChat();
+        JPanel chatPanel = new JPanel(new BorderLayout());
+        JTextField inputField = new JTextField();
+        JButton sendButton = new JButton("Senden");
+
+        chatPanel.add(inputField, BorderLayout.CENTER);
+        chatPanel.add(sendButton, BorderLayout.EAST);
+
+        frame.add(chatPanel, BorderLayout.NORTH);
+        frame.revalidate();
+
+        sendButton.addActionListener(e -> {
+            String input = inputField.getText().trim();
+            if (input.isEmpty()) return;
+
+            outputArea.append("Du: " + input + "\n");
+            String response = getChatResponse(input);
+            outputArea.append("Sophie-AI: " + response + "\n");
+            inputField.setText("");
+        });
     }
+
+    private String getChatResponse(String input) {
+        input = input.toLowerCase();
+        if (input.contains("hallo") || input.contains("hi")) return "Hallo! Wie geht es dir?";
+        if (input.contains("wie geht")) return "Mir geht’s super, danke der Nachfrage!";
+        if (input.contains("wer bist du")) return "Ich bin deine kleine KI-Assistentin 🤖✨";
+        if (input.equals("exit")) return "Auf Wiedersehen 👋";
+        return "Interessant... erzähl mir mehr!";
+    }
+
 
 }

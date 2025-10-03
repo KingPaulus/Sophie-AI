@@ -72,7 +72,7 @@ public class AppGUI {
         btnTier.addActionListener(e -> startTierAbfrage());
         btnWetter.addActionListener(e -> startWetterVorhersage());
         btnChat.addActionListener(e -> startChat());
-        btnExit.addActionListener(e -> frame.dispose());
+        btnExit.addActionListener(e -> System.exit(0));
 
         showSplash();
         //frame.setVisible(true);

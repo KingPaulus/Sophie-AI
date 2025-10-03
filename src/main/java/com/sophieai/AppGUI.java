@@ -8,16 +8,28 @@ import java.awt.event.ActionEvent;
 
 public class AppGUI {
 
-    private JFrame frame;
-    private JTextArea outputArea;
-    private JLabel imageLabel; // Bildanzeige
+    private JFrame frame;          // Das Hauptfenster
+    private JTextArea outputArea;  // Textausgaben (Log, Chat, Vorhersagen)
+    private JScrollPane scrollPane; // Scrollbarer Container für das Textfeld
+    private JPanel contentPanel;   // Zentraler Bereich (Chat, Wetter, Tiere etc.)
+    private JLabel imageLabel;     // Bildanzeige für Tiere/Wetter
+    private JLabel logoLabel;      // Start-Logo (optional, oben)
+
 
     public AppGUI() {
         frame = new JFrame("Sophie-AI 🧠✨");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Beendet App komplett
         frame.setSize(600, 500);
         frame.setLayout(new BorderLayout());
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(null); // Fenster zentrieren
+
+        // Logo Auf dem Startscreen
+        ImageIcon startLogo = new ImageIcon("img/start_logo.png");
+        Image scaledImage = startLogo.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+        logoLabel = new JLabel(new ImageIcon(scaledImage));
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        frame.add(logoLabel, BorderLayout.NORTH);
+
 
         // Fenster-Icon
         ImageIcon icon = new ImageIcon("img/icon_large.png");
@@ -29,15 +41,23 @@ public class AppGUI {
             taskbar.setIconImage(icon.getImage());
         }
 
-        // Textausgabe
+        contentPanel = new JPanel(new BorderLayout());
+
+        // Textfeld (scrollbar)
         outputArea = new JTextArea();
         outputArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(outputArea);
-        frame.add(scrollPane, BorderLayout.CENTER);
+        scrollPane = new JScrollPane(outputArea);
 
-        // Bildausgabe
-        imageLabel = new JLabel("", SwingConstants.CENTER);
-        frame.add(imageLabel, BorderLayout.EAST);
+        // Bildlabel für Tier/Wetter
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Standard-Ansicht: Text + Bild
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+        contentPanel.add(imageLabel, BorderLayout.SOUTH);
+
+        frame.add(contentPanel, BorderLayout.CENTER);
+
 
         // Menü-Buttons
         JPanel buttonPanel = new JPanel();
@@ -55,18 +75,22 @@ public class AppGUI {
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
+        // Aktionen
         btnTier.addActionListener(e -> startTierAbfrage());
         btnWetter.addActionListener(e -> startWetterVorhersage());
         btnChat.addActionListener(e -> startChat());
-        btnExit.addActionListener(e -> frame.dispose());
+        btnExit.addActionListener(e -> System.exit(0)); // Programm wirklich beenden
 
-        frame.setVisible(true);
+
+        showSplash();
+        //frame.setVisible(true);
     }
 
     private void startTierAbfrage() {
         TierClassifier classifier = new TierClassifier();
         String groesseStr = JOptionPane.showInputDialog(frame, "Größe (cm) eingeben:");
         String gewichtStr = JOptionPane.showInputDialog(frame, "Gewicht (kg) eingeben:");
+        logoLabel.setVisible(false);
 
         try {
             double groesse = Double.parseDouble(groesseStr);
@@ -85,6 +109,7 @@ public class AppGUI {
         String tempStr = JOptionPane.showInputDialog(frame, "Temperatur (°C) eingeben:");
         String humidityStr = JOptionPane.showInputDialog(frame, "Luftfeuchtigkeit (%) eingeben:");
         String windStr = JOptionPane.showInputDialog(frame, "Windgeschwindigkeit (km/h) eingeben:");
+        logoLabel.setVisible(false);
 
         try {
             double temp = Double.parseDouble(tempStr);
@@ -100,6 +125,8 @@ public class AppGUI {
     }
 
     private void startChat() {
+        contentPanel.removeAll();
+
         JPanel chatPanel = new JPanel(new BorderLayout());
         JTextField inputField = new JTextField();
         JButton sendButton = new JButton("Senden");
@@ -107,8 +134,15 @@ public class AppGUI {
         chatPanel.add(inputField, BorderLayout.CENTER);
         chatPanel.add(sendButton, BorderLayout.EAST);
 
-        frame.add(chatPanel, BorderLayout.NORTH);
-        frame.revalidate();
+        // nur Chat + Textausgabe
+        contentPanel.add(chatPanel, BorderLayout.NORTH);
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Bild explizit löschen
+        imageLabel.setIcon(null);
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
 
         sendButton.addActionListener(e -> {
             String input = inputField.getText().trim();
@@ -121,13 +155,11 @@ public class AppGUI {
         });
     }
 
+
     private String getChatResponse(String input) {
         input = input.toLowerCase();
-        if (input.contains("hallo") || input.contains("hi")) return "Hallo! Wie geht es dir?";
-        if (input.contains("wie geht")) return "Mir geht’s super, danke der Nachfrage!";
-        if (input.contains("wer bist du")) return "Ich bin deine kleine KI-Assistentin 🤖✨";
-        if (input.equals("exit")) return "Auf Wiedersehen 👋";
-        return "Interessant... erzähl mir mehr!";
+        ChatBot chat = new ChatBot();
+        return chat.askChat(input);
     }
 
     // Bild-Anzeige je nach Ergebnis
@@ -151,5 +183,25 @@ public class AppGUI {
         } else {
             imageLabel.setIcon(null);
         }
+    }
+
+    private void showSplash() {
+        JWindow splash = new JWindow();
+
+        // Splash-Logo laden und skalieren
+        ImageIcon splashIcon = new ImageIcon("img/starting_screen.png");
+        Image scaled = splashIcon.getImage().getScaledInstance(320, 340, Image.SCALE_SMOOTH);
+        JLabel splashLabel = new JLabel(new ImageIcon(scaled));
+
+        splash.add(splashLabel);
+        splash.setSize(320, 340);   // etwas größer als Bild
+        splash.setLocationRelativeTo(null);
+        splash.setVisible(true);
+
+        // Nach 2 Sekunden Splash schließen
+        new Timer(2000, e -> {
+            splash.dispose();
+            frame.setVisible(true);
+        }).start();
     }
 }

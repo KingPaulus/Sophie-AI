@@ -158,11 +158,8 @@ public class AppGUI {
 
     private String getChatResponse(String input) {
         input = input.toLowerCase();
-        if (input.contains("hallo") || input.contains("hi")) return "Hallo! Wie geht es dir?";
-        if (input.contains("wie geht")) return "Mir geht’s super, danke der Nachfrage!";
-        if (input.contains("wer bist du")) return "Ich bin deine kleine KI-Assistentin 🤖✨";
-        if (input.equals("exit")) return "Auf Wiedersehen 👋";
-        return "Interessant... erzähl mir mehr!";
+        ChatBot chat = new ChatBot();
+        return chat.askChat(input);
     }
 
     // Bild-Anzeige je nach Ergebnis

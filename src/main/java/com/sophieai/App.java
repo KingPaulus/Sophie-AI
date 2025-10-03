@@ -23,7 +23,8 @@ public class App {
             System.out.println("3 - Datenmanagement");
             System.out.println("4 - Wetter Vorhersage");
             System.out.println("5 - GUI starten");
-            System.out.println("6 - Exit");
+            System.out.println("6 - ChatGPT");
+            System.out.println("7 - Exit");
             int auswahl = scanner.nextInt();
             scanner.nextLine(); // Scanner-Puffer leeren
 
@@ -41,7 +42,10 @@ public class App {
                 weather.startInteractiveSession();
             } else if (auswahl == 5) {
                 new AppGUI();
-            } else if (auswahl == 6) {
+            }  else if (auswahl == 6) {
+                ChatChatGPT chatgpt = new ChatChatGPT();
+                chatgpt.startInteractiveSession();
+            } else if (auswahl == 7) {
                 System.out.println("Auf Wiedersehen!");
                 running = false;
             } else {

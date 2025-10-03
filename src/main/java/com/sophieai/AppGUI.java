@@ -1,10 +1,7 @@
 package com.sophieai;
 
-import com.apple.eawt.Application;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class AppGUI {
 

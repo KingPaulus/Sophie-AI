@@ -11,6 +11,7 @@ public class AppGUI {
     private JFrame frame;
     private JTextArea outputArea;
     private JLabel imageLabel; // Bildanzeige
+    private JLabel logoLabel;
 
     public AppGUI() {
         frame = new JFrame("Sophie-AI 🧠✨");
@@ -20,14 +21,9 @@ public class AppGUI {
 
         // Logo Auf dem Startscreen
         ImageIcon startLogo = new ImageIcon("img/icon_xlarge_transparent.png");
-        Image scaledImage = startLogo.getImage().getScaledInstance(430, 430, Image.SCALE_SMOOTH);
-        ImageIcon scaledLogo = new ImageIcon(scaledImage);
-
-// JLabel mit Logo und Abstand nach unten
-        JLabel logoLabel = new JLabel(scaledLogo);
+        Image scaledImage = startLogo.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH); // kleiner machen!
+        logoLabel = new JLabel(new ImageIcon(scaledImage));
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // oben/unten Abstand
-
         frame.add(logoLabel, BorderLayout.NORTH);
 
         // Fenster-Icon
@@ -82,6 +78,7 @@ public class AppGUI {
         TierClassifier classifier = new TierClassifier();
         String groesseStr = JOptionPane.showInputDialog(frame, "Größe (cm) eingeben:");
         String gewichtStr = JOptionPane.showInputDialog(frame, "Gewicht (kg) eingeben:");
+        logoLabel.setVisible(false);
 
         try {
             double groesse = Double.parseDouble(groesseStr);
@@ -100,6 +97,7 @@ public class AppGUI {
         String tempStr = JOptionPane.showInputDialog(frame, "Temperatur (°C) eingeben:");
         String humidityStr = JOptionPane.showInputDialog(frame, "Luftfeuchtigkeit (%) eingeben:");
         String windStr = JOptionPane.showInputDialog(frame, "Windgeschwindigkeit (km/h) eingeben:");
+        logoLabel.setVisible(false);
 
         try {
             double temp = Double.parseDouble(tempStr);

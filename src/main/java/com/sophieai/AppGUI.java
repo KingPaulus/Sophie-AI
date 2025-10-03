@@ -17,7 +17,18 @@ public class AppGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 500);
         frame.setLayout(new BorderLayout());
-        frame.setLocationRelativeTo(null);
+
+        // Logo Auf dem Startscreen
+        ImageIcon startLogo = new ImageIcon("img/icon_xlarge_transparent.png");
+        Image scaledImage = startLogo.getImage().getScaledInstance(430, 430, Image.SCALE_SMOOTH);
+        ImageIcon scaledLogo = new ImageIcon(scaledImage);
+
+// JLabel mit Logo und Abstand nach unten
+        JLabel logoLabel = new JLabel(scaledLogo);
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // oben/unten Abstand
+
+        frame.add(logoLabel, BorderLayout.NORTH);
 
         // Fenster-Icon
         ImageIcon icon = new ImageIcon("img/icon_large.png");
@@ -28,6 +39,9 @@ public class AppGUI {
         if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
             taskbar.setIconImage(icon.getImage());
         }
+
+        // Mittig Platzieren
+        frame.setLocationRelativeTo(null);
 
         // Textausgabe
         outputArea = new JTextArea();
@@ -60,7 +74,8 @@ public class AppGUI {
         btnChat.addActionListener(e -> startChat());
         btnExit.addActionListener(e -> frame.dispose());
 
-        frame.setVisible(true);
+        showSplash();
+        //frame.setVisible(true);
     }
 
     private void startTierAbfrage() {
@@ -151,5 +166,25 @@ public class AppGUI {
         } else {
             imageLabel.setIcon(null);
         }
+    }
+
+    private void showSplash() {
+        JWindow splash = new JWindow();
+
+        // Splash-Logo laden und skalieren
+        ImageIcon splashIcon = new ImageIcon("img/icon_xlarge_transparen_withtext.png");
+        Image scaled = splashIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        JLabel splashLabel = new JLabel(new ImageIcon(scaled));
+
+        splash.add(splashLabel);
+        splash.setSize(320, 340);   // etwas größer als Bild
+        splash.setLocationRelativeTo(null);
+        splash.setVisible(true);
+
+        // Nach 2 Sekunden Splash schließen
+        new Timer(2000, e -> {
+            splash.dispose();
+            frame.setVisible(true);
+        }).start();
     }
 }

@@ -10,18 +10,30 @@ public class ChatChatGPT {
 
     public static void config() {
         String apiKey = ConfigKey.getKey("OPENAI_API_KEY");
-
         System.out.println("API Key geladen: " + (apiKey != null ? "✅" : "❌"));
         API_KEY = apiKey;
     }
 
     public void startInteractiveSession() {
         config();
-        askChatGPT("Wetter Heute");
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        boolean running = true;
+
+        while (running) {
+            System.out.print("Frage Chatgpt etwas (exit zum Beenden): ");
+            String question = scanner.next();
+
+            if(question.equalsIgnoreCase("exit")) {
+                running = false;
+                break;
+            } else {
+                askChatGPT(question);
+            }
+        }
     }
 
     public static String askChatGPT(String question) {
-        /*
+
         try {
             URL url = new URL("https://api.openai.com/v1/chat/completions");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -67,8 +79,5 @@ public class ChatChatGPT {
             e.printStackTrace();
             return "Fehler beim Verbinden mit ChatGPT: " + e.getMessage();
         }
-
-         */
-        return null;
     }
 }

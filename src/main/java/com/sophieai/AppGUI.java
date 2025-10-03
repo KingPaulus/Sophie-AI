@@ -170,8 +170,8 @@ public class AppGUI {
         JWindow splash = new JWindow();
 
         // Splash-Logo laden und skalieren
-        ImageIcon splashIcon = new ImageIcon("img/icon_xlarge_transparen_withtext.png");
-        Image scaled = splashIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        ImageIcon splashIcon = new ImageIcon("img/starting_screen.png");
+        Image scaled = splashIcon.getImage().getScaledInstance(320, 340, Image.SCALE_SMOOTH);
         JLabel splashLabel = new JLabel(new ImageIcon(scaled));
 
         splash.add(splashLabel);
